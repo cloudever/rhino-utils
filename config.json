@@ -1,0 +1,6 @@
+{
+    "privates": {
+        "ip": "readIn",
+        "op": "writeOut"
+    }
+}
