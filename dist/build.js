@@ -1,3 +1,5 @@
+/* global java */
+
 /*
  * HashMap-in-ArrayList sorting by fields utilite
  * Uses native java.util.Comparator
@@ -7,93 +9,124 @@
  * @param {boolean} - strong comparision of values, use == or ===, default is true
  * @returns {boolean}
  */
- 
-function hmSort(arrayList, condition, strong) {
-    strong = strong || true;
-    
-    if (!arrayList || (arrayList instanceof java.util.ArrayList) === false) return false;
 
-    var ascending = true;
-    var keyMap = [];
+function hmSort(arrayList, condition) {
 
-    if (typeof condition === "string") {
-        keyMap = parseConditionString(condition);
-        if (keyMap.length === 0) return false;
-    }
-
-    var comparator = function(hashmapA, hashmapB) {
-        return compare(hashmapA, hashmapB, keyMap, 0);
-    };
-
-    if (typeof condition === "function") {
-        comparator = condition;
-    }
-    
-    var IComparator = new Packages.java.util.Comparator({ compare: comparator });
-    
-    try {
-        Packages.java.util.Collections.sort(arrayList, IComparator);
-        return true;
-    } catch (e) {
+    if (!arrayList || (arrayList instanceof java.util.ArrayList) === false) {
         return false;
     }
-
-    // Default compare function, that goes recursive
-    function compare(hashmapA, hashmapB, keyMap, i) {
-        if (i === keyMap.length) return 0;
-
-        var pair = keyMap[i];
-
-        var a = hashmapA.get(pair.key);
-        var b = hashmapB.get(pair.key);
-        
-        if (strong === true) {
-            if (a === b) return compare(hashmapA, hashmapB, keyMap, ++i);
-        } else {
-            if (a == b) return compare(hashmapA, hashmapB, keyMap, ++i);
+    
+    // Default direction
+    var ascending = true;
+	
+    var keyMap = {};
+	var keyNames = [];
+	
+	var comparator = null;
+    
+    if (typeof condition === "function") {
+        comparator = condition;
+    } else {
+        if (typeof condition === "string") {
+            keyMap = parseConditionString(condition, ascending);
+        } else if (typeof condition === "object") {
+            keyMap = condition;
+        }
+    
+        if (keyMap.length === 0) {
+            return arrayList;
         }
         
-        if (pair.asc) {
-            return a > b ? 1 : -1;
+        keyNames = Object.keys(keyMap).toString().split(',');
+
+    }
+    
+	// Default compare function, that goes recursive
+    var compare = function compare(am, bm, i) {
+        if (i === keyNames.length) {
+			return 0;
+		}
+		
+        var key = keyNames[i];
+		
+        var a = am.get(key);
+        var b = bm.get(key);
+	
+        // If boxed java classes
+        if (a instanceof java.lang.Object) {
+			if (a.compareTo(b) === 0) {
+				return compare(am, bm, ++i);
+			}
+            return keyMap.key ? a.compareTo(b) : -a.compareTo(b);
         } else {
-            return a < b ? 1 : -1;
+            // Compare using only == by the reason of boxed types
+            if (a == b) {
+				return compare(am, bm, ++i);
+			}
+            return keyMap.key ? (a > b ? 1 : -1) : (a < b ? 1 : -1)
         }
     };
+		
+	comparator = (typeof condition === "function") ? condition : function(am, bm) {
+        return compare(am, bm, 0);
+    };
+    
+    var ComparatorInstance = new java.util.Comparator({
+        compare: comparator
+    });
 
-    // Condition text parser
-    function parseConditionString(condition) {
-        var ASC = "asc";
-        
-        // Beautify string
-        condition.replace(/\s\s+/g, " ");
-        condition.trim();
-        
-        // keyMap contains both hasmap key and asc pair
-        var keyMap = [];
-        var conditionMap = condition.split(",");
-
-        for (var i = 0; i < conditionMap.length; i++) {
-            var conditionArr = conditionMap[i].trim().split(" ");
-
-            if (conditionArr.length > 0) {
-
-                var asc = ascending;
-                if (conditionArr.length > 1) {
-                    asc = (conditionArr[1].toLowerCase() === ASC);
-                }
-
-                var map = {
-                    key: conditionArr[0],
-                    asc: asc
-                };
-
-                keyMap.push(map);
-            }
-        }
-
-        return keyMap;
-    }
+    java.util.Collections.sort(arrayList, ComparatorInstance);
+    return arrayList;
 }
+
+
+
+// Sort only by your own callback
+function hmSortFn(arrayList, comparefn) {
+    
+    if (!arrayList || (arrayList instanceof java.util.ArrayList) === false) {
+		return false;
+	}
+    
+    var ComparatorInstance = new java.util.Comparator({
+        compare: comparefn
+    });
+    
+    java.util.Collections.sort(arrayList, ComparatorInstance);
+}
+
+
+
+// Condition text parser
+function parseConditionString(condition, ascending) {
+	
+    var ASC = "asc";
+
+    // Beautify string
+    condition.replace(/\s\s+/g, " ");
+    condition.trim();
+
+    // keyMap contains both hasmap key and asc
+    var keyMap = {};
+    var conditionMap = condition.split(",");
+
+    for (var i = 0; i < conditionMap.length; i++) {
+        var conditionArr = conditionMap[i].trim().split(" ");
+
+        if (conditionArr.length > 0) {
+
+            var asc = ascending;
+            if (conditionArr.length > 1) {
+                asc = (conditionArr[1].toLowerCase() === ASC);
+            }
+
+            keyMap[conditionArr[0]] = asc;
+        }
+    }
+
+    return keyMap;
+}
+
 
 /*
  * This functions are writen for clear js development in the PageFlow 
@@ -107,18 +140,25 @@ function hmSort(arrayList, condition, strong) {
  *    primitiveInt: 1337,
  *
  *    arrayList: [{
- *       key: 'value'
- *    }, 'value', 1337],
+ *       key: "value"
+ *    }, "value", 1337],
  *
  *    fromFunction: function() {
- *       return { arrayList: [1337, { key: 'val' }] }
+ *       return { arrayList: [1337, { key: "val" }] }
  *    },
  *
  *    predefinedType: {
- *       className: 'java.lang.Integer',
+ *       className: "java.lang.Integer",
  *       value: 0
  *    }
  * }
+ */
+
+/*
+ * Converts native JavaSrcipt object into Java ArrayList and/or HashMap set
+ * @param {object} object - input JS object
+ * @param {boolean} wrapNumbers - wrap Int primitives
+ * @returns {mixed}
  */
 
 /*
@@ -133,27 +173,12 @@ function objectToJava(object, wrapNumbers) {
     
     var result = null;
     
-//    var classNameMap = {
-//        'java.math.BigDecimal': java.math.BigDecimal,
-//        'java.lang.Integer'   : java.lang.Integer,
-//        'java.lang.Long'      : java.lang.Long,
-//        'java.util.Date'      : java.lang.Date
-//    }
-//    
-//    function createClassFromString(className, value) {
-//        if (classNameMap.hasOwnProperty(className.toLowerCase())) {
-//            return new classNameMap[className](value);
-//        } else {
-//            return null;
-//        }
-//    }
-    
-    if (typeof object === 'undefined') {
+    if (typeof object === "undefined" || object === null) {
         return null;
     }
     
     // Auto wrapping of Numbers
-    if (wrapNumbers === true && typeof object === 'number') {
+    if (wrapNumbers && typeof object === "number") {
         if (object % 1 === 0) {
             if (object < java.lang.Integer.MAX_VALUE) {
                 result = new java.lang.Integer(object);
@@ -172,33 +197,31 @@ function objectToJava(object, wrapNumbers) {
         for (var i = 0; i < object.length; i++) {
             result.add(objectToJava(object[i], wrapNumbers));
         }
-    } else if (typeof object === 'object') {
-        if (typeof object.className === 'string') {
+    } else if (object instanceof Date) {
+        result = new java.util.Date(object.getTime());
+    } else if (typeof object === "object") {
+		if (typeof object.className === "string") {
             try {
-                /*
-                 * Proposal
-                 * CODE: result = new createClassFromString(object.className, object.value);
-                 * The eval function using should be deprecated by the reason of perfomance
-                 */
                 result = eval("new " + object.className + "(" + object.value + ")");
             } catch (e) {
                 result = null;
             }
-        } else {
+        } else if ((hasOwnProperty in object) === true) {
             result = new java.util.HashMap();
             for (var i in object) {
                 if (object.hasOwnProperty(i)) {
                     result.put(i, objectToJava(object[i], wrapNumbers));
                 }
             }
-        }
-        
-    } else if (typeof object === 'function') {
-        var ctx = null;
-        result = objectToJava(object.call(ctx));
+        } else {
+			result = object;
+		}
+    } else if (typeof object === "function") {
+        var ctx = object;
+        result = objectToJava(object.call(ctx), wrapNumbers);
     }
     
-    if (typeof result !== 'undefined') {
+    if (typeof object !== "undefined") {
         result = object;
     }
     
@@ -219,6 +242,9 @@ function javaToObject(object) {
         for (var i = 0; i < object.size(); i++) {
             result.push(javaToObject(object.get(i)));
         }
+    } else if (object instanceof java.util.Date) {
+        result = new Date();
+        result.setTime(object.getTime());
     } else if (object instanceof java.util.HashMap) {
         result = {};
         var it = object.entrySet().iterator();
@@ -246,13 +272,13 @@ function getInputParamsJS(key) {
 
 /*
  * Converts native JavaScript objects and/or arrays into Java presentation
- * It's possible to transpile an each element of object into single output parameter
+ * It"s possible to transpile an each element of object into single output parameter
  * by passing into the key an object and leave value empty
  * @param {string|object} key
  * @param {mixed} value
  */
 function setOutputParamsJS(key, value) {
-    if (typeof key === 'object' && typeof value === 'undefined') {
+    if (typeof key === "object" && typeof value === "undefined") {
         var params = key;
         for (var i in params) {
             if (params.hasOwnProperty(i)) {
@@ -273,8 +299,8 @@ function setOutputParamsJS(key, value) {
  * @returns {mixed}
  */
 function getInputParamsPacked(key) {
-    if (typeof key !== 'string' || !key) {
-        key = 'PARAMS';
+    if (typeof key !== "string" || !key) {
+        key = "PARAMS";
     }
     return javaToObject(readIn(key));
 }
@@ -286,9 +312,9 @@ function getInputParamsPacked(key) {
  * @returns {unresolved}
  */
 function setOutputParamsPacked(key, object) {
-    if (typeof object === 'undefined') {
+    if (typeof object === "undefined") {
         object = key;
-        key = 'PARAMS';
+        key = "PARAMS";
     }
     return writeOut(key, objectToJava(object));
 }
