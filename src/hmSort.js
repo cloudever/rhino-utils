@@ -5,8 +5,7 @@
  * Uses native java.util.Comparator
  * 
  * @param {java.util.ArrayList} - arrayList 
- * @param {function|string} - condition or callback
- * @param {boolean} - strong comparision of values, use == or ===, default is true
+ * @param {function|string|object} - conditions or own callback
  * @returns {boolean}
  */
 
