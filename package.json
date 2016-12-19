@@ -13,7 +13,6 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
-    "gulp-ejs": "^2.3.0",
     "gulp-strip-comments": "^2.4.3"
   }
 }

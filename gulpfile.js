@@ -1,10 +1,7 @@
 var gulp = require("gulp");
 
-var ejs = require("gulp-ejs");
 var concat = require("gulp-concat");
 var strip = require('gulp-strip-comments');
-
-var config = require("./config.json")
 
 gulp.task("default", function() {
     gulp.src("src/**/*.js")
