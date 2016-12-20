@@ -1,17 +1,18 @@
 {
   "name": "rhino-utils",
   "version": "1.0.0",
-  "description": "",
+  "description": "Rhino utils for clean development on java",
   "main": "dist/build.js",
   "scripts": {
-    "build": "node gulpfile.js"
+    "build": "node gulpfile.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "paivanov",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
     "gulp-concat": "^2.6.1",
     "gulp-strip-comments": "^2.4.3"
   }
