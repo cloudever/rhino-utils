@@ -1,5 +1,3 @@
-/* global java */
-
 /*
  * Converts Java ArrayList and/or HashMap set into native JavaSrcipt object
  * @param {object} object
