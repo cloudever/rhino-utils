@@ -1,5 +1,3 @@
-/* global java */
-
 /*
  * HashMap-in-ArrayList sorting by fields utilite
  * Uses native java.util.Comparator
