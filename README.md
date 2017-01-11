@@ -1,9 +1,9 @@
 ## Information
-Helper function for just awesome coding in Rhino JS
+Helper function for just awesome coding in Rhino JS on SS
 
 ## Build
-If you need to use secret input and output external functions then define its original names in the **config.json**, section **privates**.
-Then run **npm run build**, new files will appear in the **dist** folder.
+Project requires **gulp** for building and optimizing.
+Just start **npm run build** then new files will appear in the **dist** folder.
 
 ## Documentation
 TODO
