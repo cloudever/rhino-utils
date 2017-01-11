@@ -63,7 +63,7 @@ function hmSort(arrayList, condition) {
             if (a == b) {
                 return compare(am, bm, ++i);
             }
-            return keyMap.key ? (a > b ? 1 : -1) : (a < b ? 1 : -1)
+            return keyMap.key ? (a > b ? 1 : -1) : (a < b ? 1 : -1);
         }
     };
 

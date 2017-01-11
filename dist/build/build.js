@@ -1,9 +1,11 @@
-/* global java */
-
+/* Function extracts a field from hashmap iterated in arraylist and returns new one.
+ *
+ * @param {ArrayList} arralist
+ * @param {string} fieldname
+ * @param {reduce} flag to reduce source arraylist over each iteration
+ */
 function hmExtract(arrayList, fieldName, reduce) {
     reduce = (reduce === true) || false;
-    
-    var retList = new java.util.ArrayList();
     
     if (!arrayList || (arrayList instanceof java.util.ArrayList) === false) {
         return false;
@@ -12,6 +14,8 @@ function hmExtract(arrayList, fieldName, reduce) {
     if (typeof fieldName !== "string") {
         return false;
     }
+    
+    var retList = new java.util.ArrayList();
     
     var arrayListSize = arrayList.size();
     
@@ -22,7 +26,6 @@ function hmExtract(arrayList, fieldName, reduce) {
     
     return retList;
 }
-/* global java */
 
 /*
  * HashMap-in-ArrayList sorting by fields utilite
@@ -89,7 +92,7 @@ function hmSort(arrayList, condition) {
             if (a == b) {
                 return compare(am, bm, ++i);
             }
-            return keyMap.key ? (a > b ? 1 : -1) : (a < b ? 1 : -1)
+            return keyMap.key ? (a > b ? 1 : -1) : (a < b ? 1 : -1);
         }
     };
 
@@ -153,7 +156,6 @@ function parseConditionString(condition, ascending) {
     return keyMap;
 }
 
-/* global java */
 
 /*
  * Converts Java ArrayList and/or HashMap set into native JavaSrcipt object
@@ -189,8 +191,11 @@ function javaToObject(object) {
     return result;
 }
 
+
+/*jshint -W061 */
+
 /*
- * This functions are writen for clear js development in the PageFlow 
+ * A function is writen for clear js development over js
  * with arrays and objects instead of java collections such as ArrayList and/or HashMap.
  * Implemented only for servers side
  * 
@@ -277,8 +282,7 @@ function objectToJava(object, wrapNumbers) {
         }
     }
     else if (typeof object === "function") {
-        var ctx = object;
-        result = objectToJava(object.call(ctx), wrapNumbers);
+        result = objectToJava(object(), wrapNumbers);
     }
 
     if (typeof object !== "undefined") {

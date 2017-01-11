@@ -1,3 +1,5 @@
+/*jshint -W061 */
+
 /*
  * A function is writen for clear js development over js
  * with arrays and objects instead of java collections such as ArrayList and/or HashMap.

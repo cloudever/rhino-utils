@@ -1,9 +1,11 @@
-/* global java */
-
+/* Function extracts a field from hashmap iterated in arraylist and returns new one.
+ *
+ * @param {ArrayList} arralist
+ * @param {string} fieldname
+ * @param {reduce} flag to reduce source arraylist over each iteration
+ */
 function hmExtract(arrayList, fieldName, reduce) {
     reduce = (reduce === true) || false;
-    
-    var retList = new java.util.ArrayList();
     
     if (!arrayList || (arrayList instanceof java.util.ArrayList) === false) {
         return false;
@@ -12,6 +14,8 @@ function hmExtract(arrayList, fieldName, reduce) {
     if (typeof fieldName !== "string") {
         return false;
     }
+    
+    var retList = new java.util.ArrayList();
     
     var arrayListSize = arrayList.size();
     

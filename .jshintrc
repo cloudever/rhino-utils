@@ -1,0 +1,6 @@
+{
+  "globals": {
+    "java": true
+  },
+  "shadow": true
+}

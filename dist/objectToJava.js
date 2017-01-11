@@ -1,5 +1,7 @@
+/*jshint -W061 */
+
 /*
- * This functions are writen for clear js development in the PageFlow 
+ * A function is writen for clear js development over js
  * with arrays and objects instead of java collections such as ArrayList and/or HashMap.
  * Implemented only for servers side
  * 
@@ -86,8 +88,7 @@ function objectToJava(object, wrapNumbers) {
         }
     }
     else if (typeof object === "function") {
-        var ctx = object;
-        result = objectToJava(object.call(ctx), wrapNumbers);
+        result = objectToJava(object(), wrapNumbers);
     }
 
     if (typeof object !== "undefined") {

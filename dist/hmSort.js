@@ -1,5 +1,3 @@
-/* global java */
-
 /*
  * HashMap-in-ArrayList sorting by fields utilite
  * Uses native java.util.Comparator
@@ -65,7 +63,7 @@ function hmSort(arrayList, condition) {
             if (a == b) {
                 return compare(am, bm, ++i);
             }
-            return keyMap.key ? (a > b ? 1 : -1) : (a < b ? 1 : -1)
+            return keyMap.key ? (a > b ? 1 : -1) : (a < b ? 1 : -1);
         }
     };
 
