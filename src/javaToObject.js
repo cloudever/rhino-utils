@@ -22,7 +22,7 @@ function javaToObject(object) {
         while (it.hasNext()) {
             var pair = it.next();
             var key = pair.getKey();
-            object[key] = javaToObject(pair.getValue());
+            result[key] = javaToObject(pair.getValue());
         }
     }
     else {
