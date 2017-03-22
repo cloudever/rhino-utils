@@ -1,9 +1,8 @@
 ## Information
-Helper function for just awesome coding in Rhino JS on SS
+A helper functions for just awesome and productivity coding in RhinoJS Engine using plain objects. 
 
 ## Build
-Project requires **gulp** for building and optimizing.
-Just start **npm run build** then new files will appear in the **dist** folder.
+Project requires **gulp** to combine files in the `dist` folder.
 
 ## Documentation
-TODO
+TODO - see code, it's easy to read within commentaries.
